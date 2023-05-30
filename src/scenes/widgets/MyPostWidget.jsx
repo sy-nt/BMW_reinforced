@@ -44,22 +44,29 @@ const MyPostWidget = ({ picturePath }) => {
         if (image) {
             formData.append("picture", image);
             formData.append("picturePath", image.name);
-        }
+            const filetypes = /jpeg|jpg|png|gif/;
+            // Check ext
+            const extname = filetypes.test(image.type);
 
-        const filetypes = /jpeg|jpg|png|gif/;
-        // Check ext
-        const extname = filetypes.test(image.type);
-
-        if (extname) {
-            const response = await fetch(`http://52.7.98.122:4000/posts`, {
-                method: "POST",
-                headers: { Authorization: `Bearer ${token}` },
-                body: formData,
-            });
-            const posts = await response.json();
-            dispatch(setPosts({ posts }));
-            setImage(null);
+            if (extname) {
+                const response = await fetch(`http://52.7.98.122:4000/posts`, {
+                    method: "POST",
+                    headers: { Authorization: `Bearer ${token}` },
+                    body: formData,
+                });
+                const posts = await response.json();
+                dispatch(setPosts({ posts }));
+                setImage(null);
+            }
         }
+        const response = await fetch(`http://52.7.98.122:4000/posts`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}` },
+            body: formData,
+        });
+        const posts = await response.json();
+        dispatch(setPosts({ posts }));
+        setImage(null);
     };
 
     return (

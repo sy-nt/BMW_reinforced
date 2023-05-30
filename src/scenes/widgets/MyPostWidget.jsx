@@ -24,7 +24,6 @@ import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
-import path from "path";
 
 const MyPostWidget = ({ picturePath }) => {
     const dispatch = useDispatch();
@@ -49,7 +48,7 @@ const MyPostWidget = ({ picturePath }) => {
 
         const filetypes = /jpeg|jpg|png|gif/;
         // Check ext
-        const extname = filetypes.test(path.extname(image.name).toLowerCase());
+        const extname = filetypes.test(image.type);
 
         if (extname) {
             const response = await fetch(`http://52.7.98.122:4000/posts`, {

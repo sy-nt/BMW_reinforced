@@ -18,7 +18,7 @@ import { verifyToken } from "./middleware/auth.js";
 import User from "./models/User.js";
 import Post from "./models/Post.js";
 import { users, posts } from "./data/index.js";
-import https from "node:https";
+// import https from "node:https";
 import fs from "fs";
 
 /* CONFIGURATIONS */
@@ -111,8 +111,11 @@ mongoose
         useUnifiedTopology: true,
     })
     .then(() => {
-        https.createServer(options, app).listen(PORT, () => {
-            console.log(`Server Port: ${PORT}`);
+        // https.createServer(options, app).listen(PORT, () => {
+        //     console.log(`Server Port: ${PORT}`);
+        // });
+        app.listen(PORT, () => {
+            console.log(`Server port:: ${PORT}`);
         });
     })
     .catch((error) => console.log(`${error} did not connect`));

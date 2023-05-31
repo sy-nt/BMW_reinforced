@@ -44,8 +44,8 @@ const Navbar = () => {
 
     const getData = async () => {
         const url = textSearch
-            ? `http://52.7.98.122:4000/posts/${textSearch}/search`
-            : `http://52.7.98.122:4000/posts`;
+            ? `https://localhost:4000/posts/${textSearch}/search`
+            : `https://localhost:4000/posts`;
         const response = await fetch(url, {
             method: "GET",
             headers: { Authorization: `Bearer ${token}` },
@@ -130,7 +130,12 @@ const Navbar = () => {
                             <MenuItem value={fullName}>
                                 <Typography>{fullName}</Typography>
                             </MenuItem>
-                            <MenuItem onClick={() => dispatch(setLogout())}>
+                            <MenuItem
+                                onClick={() => {
+                                    localStorage.removeItem("accessToken");
+                                    dispatch(setLogout());
+                                }}
+                            >
                                 Log Out
                             </MenuItem>
                         </Select>

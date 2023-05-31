@@ -43,14 +43,12 @@ const registerSchema = yup.object().shape({
     picture: yup
         .mixed()
         .required("Required")
-        .test("is-valid-type", "Not a valid image type", (value) =>
-            isValidFileType(value && value.name.toLowerCase(), "image")
-        )
-        .test(
-            "is-valid-size",
-            "Max allowed size is 10MBw",
-            (value) => value && value.size <= MAX_FILE_SIZE
-        ),
+        .test("is-valid-type", "Not a valid image type", (value) => {
+            return isValidFileType(value && value.name.toLowerCase(), "image");
+        })
+        .test("is-valid-size", "Max allowed size is 10MBw", (value) => {
+            return value && value.size <= MAX_FILE_SIZE;
+        }),
 });
 
 const loginSchema = yup.object().shape({
@@ -91,7 +89,7 @@ const Form = () => {
         formData.append("picturePath", values.picture.name);
 
         const savedUserResponse = await fetch(
-            "http://52.7.98.122:4000/auth/register",
+            "https://localhost:4000/auth/register",
             {
                 method: "POST",
                 body: formData,
@@ -107,7 +105,7 @@ const Form = () => {
 
     const login = async (values, onSubmitProps) => {
         const loggedInResponse = await fetch(
-            "http://52.7.98.122:4000/auth/login",
+            "https://localhost:4000/auth/login",
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -117,6 +115,7 @@ const Form = () => {
         const loggedIn = await loggedInResponse.json();
         onSubmitProps.resetForm();
         if (loggedIn) {
+            localStorage.setItem("accessToken", loggedIn.token);
             dispatch(
                 setLogin({
                     user: loggedIn.user,
@@ -238,11 +237,26 @@ const Form = () => {
                                                 acceptedFiles[0]
                                             )
                                         }
+                                        onChange={() => {
+                                            console.log(touched.picture);
+                                            console.log(errors.picture);
+                                        }}
+                                        error={
+                                            Boolean(touched.picture) &&
+                                            Boolean(errors.picture)
+                                        }
+                                        helperText={
+                                            touched.picture && errors.picture
+                                        }
                                     >
                                         {({ getRootProps, getInputProps }) => (
                                             <Box
                                                 {...getRootProps()}
-                                                border={`2px dashed ${palette.primary.main}`}
+                                                border={`2px dashed ${
+                                                    !errors.picture
+                                                        ? palette.primary.main
+                                                        : "red"
+                                                }`}
                                                 p="1rem"
                                                 sx={{
                                                     "&:hover": {
@@ -250,7 +264,13 @@ const Form = () => {
                                                     },
                                                 }}
                                             >
-                                                <input {...getInputProps()} />
+                                                <label {...getRootProps()}>
+                                                    <input
+                                                        {...getInputProps()}
+                                                        type="file"
+                                                        accept="image/png, image/gif, image/jpeg"
+                                                    />
+                                                </label>
                                                 {!values.picture ? (
                                                     <p>Add Picture Here</p>
                                                 ) : (
@@ -267,6 +287,7 @@ const Form = () => {
                                             </Box>
                                         )}
                                     </Dropzone>
+                                    <p>{errors.picture}</p>
                                 </Box>
                             </>
                         )}

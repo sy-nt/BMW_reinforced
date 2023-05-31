@@ -45,7 +45,7 @@ const PostWidget = ({
 
     const patchLike = async () => {
         const response = await fetch(
-            `http://52.7.98.122:4000/posts/${postId}/like`,
+            `https://localhost:4000/posts/${postId}/like`,
             {
                 method: "PATCH",
                 headers: {
@@ -62,7 +62,7 @@ const PostWidget = ({
     const createComment = async () => {
         if (comment) {
             const response = await fetch(
-                `http://52.7.98.122:4000/comments/${postId}`,
+                `https://localhost:4000/comments/${postId}`,
                 {
                     method: "POST",
                     headers: {
@@ -97,7 +97,7 @@ const PostWidget = ({
                     height="auto"
                     alt="post"
                     style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
-                    src={`http://52.7.98.122:4000/assets/${picturePath}`}
+                    src={`https://localhost:4000/assets/${picturePath}`}
                 />
             )}
             <FlexBetween mt="0.25rem">
@@ -160,7 +160,7 @@ function Comment({ userId, text, color }) {
     const [user, setUser] = useState({});
     const getUserInfor = async () => {
         const response = await fetch(
-            `http://52.7.98.122:4000/users/${userId}`,
+            `https://localhost:4000/users/${userId}`,
             {
                 method: "GET",
                 headers: { Authorization: `Bearer ${token}` },

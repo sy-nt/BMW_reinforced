@@ -36,6 +36,7 @@ const MyPostWidget = ({ picturePath }) => {
     const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
     const mediumMain = palette.neutral.mediumMain;
     const medium = palette.neutral.medium;
+    const [isErrorImage, setIsErrorImage] = useState(false);
 
     const handlePost = async () => {
         const formData = new FormData();
@@ -49,7 +50,7 @@ const MyPostWidget = ({ picturePath }) => {
             const extname = filetypes.test(image.type);
 
             if (extname) {
-                const response = await fetch(`http://52.7.98.122:4000/posts`, {
+                const response = await fetch(`https://localhost:4000/posts`, {
                     method: "POST",
                     headers: { Authorization: `Bearer ${token}` },
                     body: formData,
@@ -59,7 +60,7 @@ const MyPostWidget = ({ picturePath }) => {
                 setImage(null);
             }
         }
-        const response = await fetch(`http://52.7.98.122:4000/posts`, {
+        const response = await fetch(`https://localhost:4000/posts`, {
             method: "POST",
             headers: { Authorization: `Bearer ${token}` },
             body: formData,
@@ -96,7 +97,16 @@ const MyPostWidget = ({ picturePath }) => {
                     <Dropzone
                         acceptedFiles={["image/*"]}
                         multiple={false}
-                        onDrop={(acceptedFiles) => setImage(acceptedFiles[0])}
+                        onDrop={(acceptedFiles) => {
+                            const filetypes = /jpeg|jpg|png|gif/;
+                            const extname = filetypes.test(
+                                acceptedFiles[0].type
+                            );
+                            if (!extname) alert("invalid file type");
+                            extname
+                                ? setImage(acceptedFiles[0])
+                                : setImage(null);
+                        }}
                     >
                         {({ getRootProps, getInputProps }) => (
                             <FlexBetween>

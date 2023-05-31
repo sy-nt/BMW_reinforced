@@ -22,7 +22,7 @@ const UserWidget = ({ userId, picturePath }) => {
     const main = palette.neutral.main;
 
     const getUser = async () => {
-        const response = await fetch(`http://52.7.98.122:4000/users/${userId}`, {
+        const response = await fetch(`https://localhost:4000/users/${userId}`, {
             method: "GET",
             headers: { Authorization: `Bearer ${token}` },
         });

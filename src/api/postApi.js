@@ -1,8 +1,11 @@
 import axiosClient from "./axiosClient";
 
-const authApi = {
-    login: (params) => axiosClient.post("/auth/login", params),
-    register: (params) => axiosClient.post("/auth/register", params),
+const postApi = {
+    getAll: () => axiosClient.get("posts"),
+    getSearchPost: (params) => axiosClient.get(`posts/${params}/search`),
+    getPostByUserId: (id) => axiosClient.get(`posts/${id}/posts`),
+    commentPost: ({ id, params }) => axiosClient(`comment/${id}`, params),
+    likePost: ({ id, params }) => axiosClient.patch(`posts/${id}/like`, params),
 };
 
-export default authApi;
+export default postApi;

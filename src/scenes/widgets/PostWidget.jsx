@@ -19,6 +19,8 @@ import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "state";
+import postApi from "api/postApi";
+import userApi from "api/userApi";
 import { useEffect } from "react";
 const PostWidget = ({
     postId,
@@ -34,7 +36,6 @@ const PostWidget = ({
     const [comment, setComment] = useState("");
     const [isComments, setIsComments] = useState(false);
     const dispatch = useDispatch();
-    const token = useSelector((state) => state.token);
     const loggedInUserId = useSelector((state) => state.user._id);
     const isLiked = Boolean(likes[loggedInUserId]);
     const likeCount = Object.keys(likes).length;
@@ -43,42 +44,27 @@ const PostWidget = ({
     const main = palette.neutral.main;
     const primary = palette.primary.main;
 
-    const patchLike = async () => {
-        const response = await fetch(
-            `https://localhost:4000/posts/${postId}/like`,
-            {
-                method: "PATCH",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ userId: loggedInUserId }),
-            }
-        );
-        const updatedPost = await response.json();
-        dispatch(setPost({ post: updatedPost }));
-    };
+     const patchLike = async () => {
+         const response = await postApi.likePost({
+             id: postId,
+             params: { userId: loggedInUserId },
+         });
+         dispatch(setPost({ post: response }));
+     };
 
-    const createComment = async () => {
-        if (comment) {
-            const response = await fetch(
-                `https://localhost:4000/comments/${postId}`,
-                {
-                    method: "POST",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        userId: loggedInUserId,
-                        text: comment,
-                    }),
-                }
-            );
-            const newComment = await response.json();
-            dispatch(setPost({ post: newComment }));
-        }
-    };
+     const createComment = async () => {
+         if (comment) {
+             const response = await postApi.commentPost({
+                 id: postId,
+                 params: {
+                     userId: loggedInUserId,
+                     text: comment,
+                 },
+             });
+             const newComment = await response.json();
+             dispatch(setPost({ post: newComment }));
+         }
+     };
 
     return (
         <WidgetWrapper m="2rem 0">
@@ -97,7 +83,7 @@ const PostWidget = ({
                     height="auto"
                     alt="post"
                     style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
-                    src={`https://localhost:4000/assets/${picturePath}`}
+                    src={`${process.env.REACT_APP_API_URL}/assets/${picturePath}`}
                 />
             )}
             <FlexBetween mt="0.25rem">
@@ -156,21 +142,14 @@ const PostWidget = ({
 };
 
 function Comment({ userId, text, color }) {
-    const token = useSelector((state) => state.token);
     const [user, setUser] = useState({});
     const getUserInfor = async () => {
-        const response = await fetch(
-            `https://localhost:4000/users/${userId}`,
-            {
-                method: "GET",
-                headers: { Authorization: `Bearer ${token}` },
-            }
-        );
-        const data = await response.json();
-        setUser(data);
+        const response = await userApi.getUser(userId);
+        setUser(response);
     };
     useEffect(() => {
         getUserInfor();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     return (
         <>

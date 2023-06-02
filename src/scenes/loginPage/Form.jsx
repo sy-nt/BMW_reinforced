@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogin } from "state";
 import Dropzone from "react-dropzone";
+import authApi from "api/authApi";
 import FlexBetween from "components/FlexBetween";
 const MAX_FILE_SIZE = 10240000; //100KB
 const validFileExtensions = {
@@ -88,38 +89,23 @@ const Form = () => {
         }
         formData.append("picturePath", values.picture.name);
 
-        const savedUserResponse = await fetch(
-            "https://localhost:4000/auth/register",
-            {
-                method: "POST",
-                body: formData,
-            }
-        );
-        const savedUser = await savedUserResponse.json();
+        const savedUserResponse = await authApi.register(formData);
         onSubmitProps.resetForm();
 
-        if (savedUser) {
+        if (savedUserResponse) {
             setPageType("login");
         }
     };
 
     const login = async (values, onSubmitProps) => {
-        const loggedInResponse = await fetch(
-            "https://localhost:4000/auth/login",
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(values),
-            }
-        );
-        const loggedIn = await loggedInResponse.json();
+        const loggedInResponse = await authApi.login(values);
         onSubmitProps.resetForm();
-        if (loggedIn) {
-            localStorage.setItem("accessToken", loggedIn.token);
+        if (loggedInResponse) {
+            localStorage.setItem("accessToken", loggedInResponse.token);
             dispatch(
                 setLogin({
-                    user: loggedIn.user,
-                    token: loggedIn.token,
+                    user: loggedInResponse.user,
+                    token: loggedInResponse.token,
                 })
             );
             navigate("/home");
@@ -127,9 +113,8 @@ const Form = () => {
     };
 
     const handleFormSubmit = async (values, onSubmitProps) => {
-        if (isLogin) {
-            await login(values, onSubmitProps);
-        }
+        console.log("handle form submit");
+        if (isLogin) await login(values, onSubmitProps);
         if (isRegister) await register(values, onSubmitProps);
     };
 

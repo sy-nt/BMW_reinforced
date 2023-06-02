@@ -2,32 +2,20 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
 import PostWidget from "./PostWidget";
+import postApi from "api/postApi";
 
 const PostsWidget = ({ userId, isProfile = false }) => {
     const dispatch = useDispatch();
     const posts = useSelector((state) => state.posts);
-    const token = useSelector((state) => state.token);
 
     const getPosts = async () => {
-        const response = await fetch("https://localhost:4000/posts", {
-            method: "GET",
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await response.json();
-        console.log(response);
-        dispatch(setPosts({ posts: data }));
+        const response = await postApi.getAll();
+        dispatch(setPosts({ posts: response }));
     };
 
     const getUserPosts = async () => {
-        const response = await fetch(
-            `https://localhost:4000/posts/${userId}/posts`,
-            {
-                method: "GET",
-                headers: { Authorization: `Bearer ${token}` },
-            }
-        );
-        const data = await response.json();
-        dispatch(setPosts({ posts: data }));
+        const response = await postApi.getPostByUserId(userId);
+        dispatch(setPosts({ posts: response }));
     };
 
     useEffect(() => {
@@ -37,7 +25,6 @@ const PostsWidget = ({ userId, isProfile = false }) => {
             getPosts();
         }
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
     return (
         <>
             {posts.map(

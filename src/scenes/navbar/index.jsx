@@ -25,6 +25,7 @@ import { setMode, setLogout } from "state";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "components/FlexBetween";
 import { setPosts } from "state";
+import postApi from "api/postApi";
 
 const Navbar = () => {
     const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
@@ -33,7 +34,6 @@ const Navbar = () => {
     const user = useSelector((state) => state.user);
     const [textSearch, setTextSearch] = useState("");
     const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
-    const token = useSelector((state) => state.token);
 
     const theme = useTheme();
     const neutralLight = theme.palette.neutral.light;
@@ -43,15 +43,10 @@ const Navbar = () => {
     const alt = theme.palette.background.alt;
 
     const getData = async () => {
-        const url = textSearch
-            ? `https://localhost:4000/posts/${textSearch}/search`
-            : `https://localhost:4000/posts`;
-        const response = await fetch(url, {
-            method: "GET",
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await response.json();
-        dispatch(setPosts({ posts: data }));
+        const response = textSearch
+            ? await postApi.getSearchPosts(textSearch)
+            : await postApi.getAll();
+        dispatch(setPosts({ posts: response }));
     };
 
     const fullName = `${user.firstName} ${user.lastName}`;

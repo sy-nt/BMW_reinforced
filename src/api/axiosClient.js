@@ -1,15 +1,13 @@
 import axios from "axios";
-import qs from "query-string";
+import queryString from "query-string";
 
-const getToken = () => localStorage.getItem("accessToken");
+const baseUrl = `${process.env.REACT_APP_API_URL}`;
+
+const getAccessToken = () => localStorage.getItem("accessToken");
 
 const axiosClient = axios.create({
-    baseURL: "https://localhost:4000",
-    paramsSerializer: {
-        serialize: function (params) {
-            return qs.stringify(params, { arrayFormat: "repeat" });
-        },
-    },
+    baseURL: baseUrl,
+    paramsSerializer: (params) => queryString.stringify({ params }),
 });
 
 axiosClient.interceptors.request.use(async (config) => {
@@ -17,17 +15,18 @@ axiosClient.interceptors.request.use(async (config) => {
         ...config,
         headers: {
             "Content-Type": "application/json",
-            Authorization: getToken ? `Bearer ${getToken()}` : "",
+            Authorization: getAccessToken(),
         },
     };
 });
 
 axiosClient.interceptors.response.use(
     (response) => {
+        if (response && response.data) return response.data;
         return response;
     },
-    (error) => {
-        return Promise.reject(error.message);
+    async (err) => {
+        return err;
     }
 );
 

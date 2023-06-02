@@ -18,7 +18,7 @@ import { verifyToken } from "./middleware/auth.js";
 import User from "./models/User.js";
 import Post from "./models/Post.js";
 import { users, posts } from "./data/index.js";
-// import https from "node:https";
+import https from "node:https";
 import fs from "fs";
 
 /* CONFIGURATIONS */
@@ -47,7 +47,11 @@ app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(
     cors({
-        origin: "http://3.227.150.6:3000",
+        origin: [
+            "http://3.227.150.6:3000",
+            "https://localhost:3000",
+            "http://52.0.222.231:3000",
+        ],
     })
 );
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
@@ -92,7 +96,7 @@ function checkFileType(file, cb) {
     if (mimetype && extname) {
         return cb(null, true);
     } else {
-        return cb(null, false);
+        throw new Error("Invalid file type");
     }
 }
 /* ROUTES WITH FILES */
@@ -115,11 +119,11 @@ mongoose
         useUnifiedTopology: true,
     })
     .then(() => {
-        // https.createServer(options, app).listen(PORT, () => {
-        //     console.log(`Server Port: ${PORT}`);
-        // });
-        app.listen(PORT, () => {
-            console.log(`Server port:: ${PORT}`);
+        https.createServer(options, app).listen(PORT, () => {
+            console.log(`Server Port: ${PORT}`);
         });
+        // app.listen(PORT, () => {
+        //     console.log(`Server port:: ${PORT}`);
+        // });
     })
     .catch((error) => console.log(`${error} did not connect`));

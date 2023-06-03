@@ -45,8 +45,7 @@ const MyPostWidget = ({ picturePath }) => {
         }
 
         const response = await postApi.uploadPost(formData);
-        console.log(response);
-        dispatch(setPosts({ posts: response }));
+        dispatch(setPosts({ posts: response.data }));
         setImage(null);
         setPost("");
     };

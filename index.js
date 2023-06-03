@@ -119,11 +119,11 @@ mongoose
         useUnifiedTopology: true,
     })
     .then(() => {
-        https.createServer(options, app).listen(PORT, () => {
-            console.log(`Server Port: ${PORT}`);
-        });
-        // app.listen(PORT, () => {
-        //     console.log(`Server port:: ${PORT}`);
+        // https.createServer(options, app).listen(PORT, () => {
+        //     console.log(`Server Port: ${PORT}`);
         // });
+        app.listen(PORT, () => {
+            console.log(`Server port:: ${PORT}`);
+        });
     })
     .catch((error) => console.log(`${error} did not connect`));

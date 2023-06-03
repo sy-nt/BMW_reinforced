@@ -50,6 +50,7 @@ app.use(
         origin: [
             "http://3.227.150.6:3000",
             "https://localhost:3000",
+            "http://localhost:3000",
             "http://52.0.222.231:3000",
         ],
     })

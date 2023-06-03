@@ -22,7 +22,7 @@ import Dropzone from "react-dropzone";
 import UserImage from "components/UserImage";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setPosts } from "state";
 import postApi from "api/postApi";
 
@@ -32,14 +32,12 @@ const MyPostWidget = ({ picturePath }) => {
     const [image, setImage] = useState(null);
     const [post, setPost] = useState("");
     const { palette } = useTheme();
-    const { _id } = useSelector((state) => state.user);
     const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
     const mediumMain = palette.neutral.mediumMain;
     const medium = palette.neutral.medium;
 
     const handlePost = async () => {
         const formData = new FormData();
-        formData.append("userId", _id);
         formData.append("description", post);
         if (image) {
             formData.append("picture", image);

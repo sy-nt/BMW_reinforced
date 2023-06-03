@@ -44,27 +44,26 @@ const PostWidget = ({
     const main = palette.neutral.main;
     const primary = palette.primary.main;
 
-     const patchLike = async () => {
-         const response = await postApi.likePost({
-             id: postId,
-             params: { userId: loggedInUserId },
-         });
-         dispatch(setPost({ post: response }));
-     };
+    const patchLike = async () => {
+        const response = await postApi.likePost({
+            id: postId,
+            params: { userId: loggedInUserId },
+        });
+        dispatch(setPost({ post: response }));
+    };
 
-     const createComment = async () => {
-         if (comment) {
-             const response = await postApi.commentPost({
-                 id: postId,
-                 params: {
-                     userId: loggedInUserId,
-                     text: comment,
-                 },
-             });
-             const newComment = await response.json();
-             dispatch(setPost({ post: newComment }));
-         }
-     };
+    const createComment = async () => {
+        if (comment) {
+            const response = await postApi.commentPost({
+                id: postId,
+                params: {
+                    userId: loggedInUserId,
+                    text: comment,
+                },
+            });
+            dispatch(setPost({ post: response }));
+        }
+    };
 
     return (
         <WidgetWrapper m="2rem 0">
@@ -149,7 +148,7 @@ function Comment({ userId, text, color }) {
     };
     useEffect(() => {
         getUserInfor();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     return (
         <>
